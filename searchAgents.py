@@ -289,6 +289,7 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
         self.startGS = startingGameState
+        self.cornerVisitState = ["U", "U", "U", "U"]
 
     def getStartState(self):
         """
@@ -297,7 +298,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         #state is tuple starting postiion and empty list
-        startState = (self.startingPosition, []) 
+        startState = (self.startingPosition, self.cornerVisitState) 
         return startState
 
     def isGoalState(self, state):
@@ -337,21 +338,26 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-            x,y = state[0]
+            x,y = state[0][:]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            hitsWall = self.walls[nextx][nexty]
-            visitedCorners= state[1]
-
+ 
+            visitedCorners= state[1][:]
+            hitsWall = self.walls[nextx][nexty] #readability
             if not hitsWall:
 				#sets next node
                 nextPosition = (nextx, nexty)
 				#!!!!not sure on
-                successorVisitedCorners = list(visitedCorners) 
+                #successorVisitedCorners = list(visitedCorners) 
                 if nextPosition in self.corners:  #if in corners then
-                    if not nextPosition in successorVisitedCorners:
-                        successorVisitedCorners.append(nextPosition) #add to visited corners 
-                nextState = (nextPosition, successorVisitedCorners)  #for readability
+                    #successorVisitedCorners[self.corners.index(nextPosition)] = "V"
+                    visitedCorners[self.corners.index(nextPosition)] = "V"
+                    #!!! append version
+                    #if not nextPosition in successorVisitedCorners:
+                        #successorVisitedCorners.append(nextPosition) #add to visited corners 
+                        
+                #nextState = (nextPosition, successorVisitedCorners)  #for readability
+                nextState = (nextPosition, visitedCorners)
                 successors.append((nextState, action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
@@ -390,26 +396,35 @@ def cornersHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     pacNode = state[0]
     visitedCorners = state[1]
-    unvisitedCorners = [] #empty list
+    #!!! For while version
+    #unvisitedCorners = [] #empty list
     #for all corners in corners loop
-    for mazeCorner in corners:
-        if mazeCorner not in visitedCorners:
-        	#add the maze corner to unvisited corners if not there
-            unvisitedCorners.append(mazeCorner)
-    totalCornerDistance = 0 #set distance to 0 for default
+    #for mazeCorner in corners:
+    #    if mazeCorner not in visitedCorners:
+    #    	#add the maze corner to unvisited corners if not there
+    #        unvisitedCorners.append(mazeCorner)
+    heuristics = 0 #set distance to 0 for default
     #if already goal
     if problem.isGoalState(state):
-            return totalCornerDistance
+            return heuristics
+    distancesFromCorners = []
+    
     #while loop if unvisited not empty
-    while unvisitedCorners != []:
+    #while unvisitedCorners != []:
     #get mazecorenr and distance using list comprehension
-        cornerDistance, mazeCorner = min([(mazeDistance(pacNode, mazeCorner, problem.startGS), mazeCorner) for mazeCorner in unvisitedCorners])
-        totalCornerDistance += cornerDistance
-    	#sets nod to corner
-        pacNode = mazeCorner
+        #cornerDistance, mazeCorner = min([(mazeDistance(pacNode, mazeCorner, problem.startGS), mazeCorner) for mazeCorner in unvisitedCorners])
+    for index, entry in enumerate(visitedCorners):
+        if entry == "U":
+            distancesFromCorners.append(util.manhattanDistance(pacNode, corners[index]))
+    	#!!! WHILE 
+        #sets nod to corner
+        #pacNode = mazeCorner
     	#removes mazeCorner from unvisited
-        unvisitedCorners.remove(mazeCorner) 
-    return totalCornerDistance # Default to trivial solution
+        #unvisitedCorners.remove(mazeCorner) 
+    #get largest distance
+    heuristics = max(distancesFromCorners)
+    return heuristics
+    return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
