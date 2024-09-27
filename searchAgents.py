@@ -500,20 +500,16 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    
-    pacBabyX, pacBabyY = position
-    pelletDistances = []
+    if not foodGrid.asList(): #check empty food grid
+        return 0
+    fHeuristics = 0
     #loop through the foodgrid
-    for x, y in foodGrid.asList():
-        manhattanDistance = abs(x - pacBabyX) + abs(y - pacBabyY)
-        pelletDistances.append(manhattanDistance) #adds the new distance
-    #check if there is food via falsy check on pelletDistances
-    if pelletDistances:
-        closestPellet = min(pelletDistances)
-    else:
-        closestPellet = 0
-   	#return distance of closest pellet
-    return closestPellet
+    for pellet in foodGrid.asList():
+        pelletDistance = mazeDistance(position, pellet, problem.startingGameState) #gets maze distances
+        #check if food heuristics are less than the true cost
+        if fHeuristics < pelletDistance:
+            fHeuristics = pelletDistance
+    return fHeuristics
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
