@@ -410,7 +410,8 @@ def cornersHeuristic(state, problem):
         #cornerDistance, mazeCorner = min([(mazeDistance(pacNode, mazeCorner, problem.startGS), mazeCorner) for mazeCorner in unvisitedCorners])
     for index, entry in enumerate(visitedCorners):
         if entry == "U":
-            distancesFromCorners.append(mazeDistance(pacNode, corners[index], problem.startGS))
+            #distancesFromCorners.append(mazeDistance(pacNode, corners[index], problem.startGS)) #less expanded nodes but slower
+            distancesFromCorners.append(util.manhattanDistance(pacNode, corners[index])) #faster but more expanded nodes
     	#!!! WHILE 
         #sets nod to corner
         #pacNode = mazeCorner
