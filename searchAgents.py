@@ -306,16 +306,11 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        #set the current node
-        pacNode = state[0]
-        visitedCorners = state[1] #set visited node
-        if pacNode in self.corners:
-            if not pacNode in visitedCorners:
-            	#add current node to visited corners
-                visitedCorners.append(pacNode)
-            return len(visitedCorners) == 4 #return whether visted all corners
-        else:
-            return False  
+        #if unvisited return false
+        if "U" in state[1]:
+            return False
+        #otherwise return true
+        return True
 
     def getSuccessors(self, state):
         """
@@ -599,7 +594,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        atGoalCheck = (state in self.food) #checks if state in self.food
+        foodList = self.food.asList() #make food a list
+        atGoalCheck = ((x, y) in foodList) #checks if state in self.food
         return atGoalCheck
 
 def mazeDistance(point1, point2, gameState):
