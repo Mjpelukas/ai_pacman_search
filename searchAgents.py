@@ -391,36 +391,22 @@ def cornersHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     pacNode = state[0]
     visitedCorners = state[1]
-    #!!! For while version
-    #unvisitedCorners = [] #empty list
-    #for all corners in corners loop
-    #for mazeCorner in corners:
-    #    if mazeCorner not in visitedCorners:
-    #    	#add the maze corner to unvisited corners if not there
-    #        unvisitedCorners.append(mazeCorner)
+    
     heuristics = 0 #set distance to 0 for default
     #if already goal
     if problem.isGoalState(state):
             return heuristics
     distancesFromCorners = []
     
-    #while loop if unvisited not empty
-    #while unvisitedCorners != []:
-    #get mazecorenr and distance using list comprehension
-        #cornerDistance, mazeCorner = min([(mazeDistance(pacNode, mazeCorner, problem.startGS), mazeCorner) for mazeCorner in unvisitedCorners])
     for index, entry in enumerate(visitedCorners):
         if entry == "U":
             #distancesFromCorners.append(mazeDistance(pacNode, corners[index], problem.startGS)) #less expanded nodes but slower
             distancesFromCorners.append(util.manhattanDistance(pacNode, corners[index])) #faster but more expanded nodes
-    	#!!! WHILE 
-        #sets nod to corner
-        #pacNode = mazeCorner
-    	#removes mazeCorner from unvisited
-        #unvisitedCorners.remove(mazeCorner) 
+    	
     #get largest distance
     heuristics = max(distancesFromCorners)
     return heuristics
-    return 0 # Default to trivial solution
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
